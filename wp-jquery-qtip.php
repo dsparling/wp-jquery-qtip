@@ -2,12 +2,12 @@
 /*
 Plugin Name: WP jQuery qTip
 Plugin URI: http://www.dougparling.org/
-Description: JR qTip for Wordpress is a plugin that uses qTip to display nice looking, user friendly tooltips. Colors and position are easily changeable. Based on JR qTip for WordPress by Jacob Ras
-Version: 0.9.0
+Description: WP jQuery qTip for Wordpress is a plugin that uses qTip v1.0 and v2.0  to display nice looking, user friendly tooltips. Colors and position are easily changeable. Based on JR qTip for WordPress by Jacob Ras
+Version: 1.9.0
 Author: Doug Sparling
 Author URI: http://www.dougsparling.org
 
-    Copyright 2013 Doug Sparling (email : doug@kl93.com)
+    Copyright 2013-2015 Doug Sparling (email : doug@kl93.com)
     Copyright 2009  Jacob Ras    (email : info@jacobras.nl)
 
     This program is free software; you can redistribute it and/or modify
@@ -28,29 +28,37 @@ Author URI: http://www.dougsparling.org
 
 function wp_jquery_qtip() {
 
-    $wp_jquery_qtip = get_option( 'wp_jquery_qtip' );
+	$wp_jquery_qtip = get_option( 'wp_jquery_qtip' );
 
-    if ( $wp_jquery_qtip['enable_qtip'] == 'on' ) {
+	if ( $wp_jquery_qtip['enable_qtip'] == 'on' ) {
 
-        wp_enqueue_script( 'jquery' );
+		if ( $wp_jquery_qtip['tooltip_version'] == 1 ) {
+			wp_register_script( 'jquery.qtip', plugins_url( 'js/jquery.qtip-1.0.0-rc3.min.js', __FILE__ ) );
+			wp_enqueue_script( 'jquery.qtip', array( 'jquery' ) );
 
-        wp_enqueue_script( 'jquery.qtip',
-            plugin_dir_url( __FILE__ ) . 'js/jquery.qtip-1.0.0-rc3.min.js',
-            array( 'jquery' ), '', 1 );
+			wp_register_script( 'wp_jquery_qtip_tooltip', plugins_url( 'js/wp_jquery_qtip_tooltip.js', __FILE__ ) );
+			wp_enqueue_script( 'wp_jquery_qtip_tooltip', array( 'jquery', 'jquery.qtip' ) );
+		} else {
+			wp_register_script( 'jquery.qtip', plugins_url( 'js/qTip2/jquery.qtip.min.js', __FILE__ ) );
+			wp_enqueue_script( 'jquery.qtip', array('jquery'));
 
-        wp_enqueue_script( 'wp_jquery_qtip_tooltip',
-          plugin_dir_url( __FILE__ ) . 'js/wp_jquery_qtip_tooltip.js',
-          array( 'jquery', 'jquery.qtip' ), '', 1 );
+			wp_register_script( 'wp_jquery_qtip_tooltip', plugins_url( 'js/qTip2/wp_jquery_qtip_tooltip.js', __FILE__ ) );
+			wp_enqueue_script( 'wp_jquery_qtip_tooltip', array( 'jquery', 'jquery.qtip' ) );
 
-        $params = array(
-          'tooltip_color' => $wp_jquery_qtip['tooltip_color'],
-          'tooltip_target' =>  $wp_jquery_qtip['tooltip_target'],
-          'tooltip_position' => $wp_jquery_qtip['tooltip_position']
-        );
+			wp_register_style('jquery.qtip', plugins_url( 'css/qTip2/jquery.qtip.min.css', __FILE__ ) );
+			wp_enqueue_style( 'jquery.qtip');
+		}
 
-        wp_localize_script( 'wp_jquery_qtip_tooltip', 'wp_jquery_qtip_params', $params );
+		$params = array(
+			'tooltip_version'  => $wp_jquery_qtip['tooltip_version'],
+			'tooltip_color'    => $wp_jquery_qtip['tooltip_color'], // Style
+			'tooltip_target'   =>  $wp_jquery_qtip['tooltip_target'],
+			'tooltip_position' => $wp_jquery_qtip['tooltip_position']
+		);
 
-    }
+		wp_localize_script( 'wp_jquery_qtip_tooltip', 'wp_jquery_qtip_params', $params );
+
+	}
 }
 
 
@@ -66,6 +74,7 @@ function wp_jquery_qtip_admin() { ?>
             } else {
                 $wp_jquery_qtip['enable_qtip'] = '';
             }
+            $wp_jquery_qtip['tooltip_version'] = $_POST['wp_jquery_qtip_tooltip_version'];
             $wp_jquery_qtip['tooltip_color'] = $_POST['wp_jquery_qtip_tooltip_color'];
             $wp_jquery_qtip['tooltip_target'] = $_POST['wp_jquery_qtip_tooltip_target'];
             $wp_jquery_qtip['tooltip_position'] = $_POST['wp_jquery_qtip_tooltip_position'];
@@ -95,9 +104,21 @@ function wp_jquery_qtip_admin() { ?>
                                     </td>
                                 </tr>
 
+								<tr>
+									<th valign="top">
+										<label>qTip version</label>
+									</th>
+									<td valign="top">
+										<select name="wp_jquery_qtip_tooltip_version">
+											<option <?php if( $wp_jquery_qtip['tooltip_version'] == 1 ) { echo 'selected="selected"'; } ?> value="1">1&nbsp;&nbsp;&nbsp;</option>
+											<option <?php if( $wp_jquery_qtip['tooltip_version'] == 2 ) { echo 'selected="selected"'; } ?> value="2">2&nbsp;&nbsp;&nbsp;</option>
+										</select>
+									</td>
+								</tr>
+
                                 <tr>
                                     <th valign="top">
-                                        <label>Tooltip color:</label>
+                                        <label>Tooltip style:</label>
                                     </th>
                                     <td valign="top">
                                         <select name="wp_jquery_qtip_tooltip_color">
@@ -163,7 +184,7 @@ function wp_jquery_qtip_admin() { ?>
                     </div>
 
                     <div class="postbox">
-                    <h3>Tooltip color &amp; positioning preview:</h3>
+                    <h3>Tooltip style &amp; positioning preview:</h3>
                     <p style="text-align:center;">
                         <img src="<?php echo get_bloginfo('url') . '/wp-content/plugins/wp-jquery-qtip/qtip_positioning.jpg'; ?>" />
                     </p>
@@ -188,6 +209,7 @@ function wp_jquery_qtip_admin() { ?>
 // default settings
 $wp_jquery_qtip = array();
 $wp_jquery_qtip['enable_qtip']       = 'on';
+$wp_jquery_qtip['tooltip_version']   = 1;
 $wp_jquery_qtip['tooltip_color']     = 'cream';
 $wp_jquery_qtip['tooltip_target']    = 'bottomMiddle';
 $wp_jquery_qtip['tooltip_position']  = 'topMiddle';

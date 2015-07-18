@@ -3,12 +3,12 @@ Contributors: scriptrunner
 Donate link: http://www.dougsparling.org/
 Tags: tooltip, link text
 Requires at least: 3.3
-Tested up to: 3.5
-Stable tag: 0.9.0
+Tested up to: 4.2.2
+Stable tag: 1.9.0
 License: MIT License
 License URI: http://www.opensource.org/licenses/mit-license.php
 
-WP jQuery qTip is a plugin that uses qTip v1.0 to display nice looking, user friendly tooltips. Colors and position are easily changeable.
+WP jQuery qTip is a plugin that uses qTip v1.0 and v2.0 to display nice looking, user friendly tooltips. Colors and position are easily changeable.
 
 == Description ==
 
@@ -37,6 +37,10 @@ I needed to have the original JR qTip for WordPress plugin run on WordPress 3.x 
 As the plugin hadn't been upgraded in over 2 years and I saw no immediate replacement, I went ahead
 and upgraded the plugin to work on the latest (3.5) WordPress.
 
+But wait, this release has preliminary support for qTip2! I'll be lookng at qTip2 and see what I can add.
+You can continue to use qTip1, I'll provide backwards compatibility for the foreseeable future.
+Expect support for shortcodes at somepoint as well.
+
 == Screenshots ==
 
 1. **WP jQuery qTip Settings** - Settings
@@ -44,6 +48,9 @@ and upgraded the plugin to work on the latest (3.5) WordPress.
 2. **WP jQuery qTip Title Attribute** - Frontend
 
 == Changelog ==
+
+= 1.9.0 =
+* Initial support for qTip2.
 
 = 0.9.0 =
 * Initial release.
